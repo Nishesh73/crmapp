@@ -52,8 +52,12 @@ class _HomePageState extends State<HomePage> {
           IconButton(
               onPressed: () {
                 Provider.of<CustomerProvider>(context, listen: false)
-                    .addCustomer(CustomerModel(gender: "NewAd", fullName: "New name", email: "new Email",
-                     profilePicture: 'https://randomuser.me/api/portraits/women/1.jpg'));
+                    .addCustomer(CustomerModel(
+                        gender: "NewAd",
+                        fullName: "New name",
+                        email: "new Email",
+                        profilePicture:
+                            'https://randomuser.me/api/portraits/women/1.jpg'));
               },
               icon: const Icon(Icons.add))
         ],
@@ -66,8 +70,9 @@ class _HomePageState extends State<HomePage> {
                 return ListTile(
                   leading: CircleAvatar(
                     radius: 30,
-                    backgroundImage: 
-                  NetworkImage(customerList[index].profilePicture),),
+                    backgroundImage:
+                        NetworkImage(customerList[index].profilePicture),
+                  ),
                   subtitle: Text(customerList[index].email),
                   title: Text(customerList[index].fullName),
                   trailing: Row(
