@@ -1,4 +1,3 @@
-
 class CustomerModel {
   final String gender;
 
@@ -15,11 +14,11 @@ class CustomerModel {
       {required this.gender,
       required this.fullName,
       required this.email,
-       this.phone,
-     this.cell,
+      this.phone,
+      this.cell,
       this.city,
-       this.state,
-       this.country,
+      this.state,
+      this.country,
       required this.profilePicture});
 
   static CustomerModel fromJson(Map data) {
@@ -33,8 +32,6 @@ class CustomerModel {
       state: data["location"]["state"],
       country: data['location']['country'],
       profilePicture: data['picture']['large'],
-
-
     );
   }
 }

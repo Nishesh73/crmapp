@@ -1,6 +1,7 @@
-import 'package:crm_app/data/customer_model/custome_model_hive.dart';
+import 'package:crm_app/data/customer_model/customer_model_hive.dart';
 import 'package:crm_app/data/customer_model/customer_model.dart';
 import 'package:crm_app/data/remote_source.dart';
+import 'package:crm_app/domain/customer_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -10,12 +11,14 @@ class CustomerProvider extends ChangeNotifier {
 //getter for getting _customers list
   get customers => _customers;
 
-  fetchCustomers() async {
+  void fetchCustomers() async {
     try {
-      var box = await Hive.openBox("customerBox");
+      // var box = await Hive.openBox("customerBox");
+      var box = await Hive.openBox<CustomerModelHive>('customerBox');
       List<CustomerModelHive> custHive;
 
       if (box.isEmpty) {
+        print("box is empty");
         List<CustomerModel>? customerData =
             await RemoteSource().fetchRemoteData();
         print("customers data is $customerData");
@@ -28,8 +31,12 @@ class CustomerProvider extends ChangeNotifier {
           await box.add(i);
         }
 
+        print("box have values ${box.values.toList()}");
+
         _customers = customerData;
+        notifyListeners();
       } else {
+        print("box is not empty");
         List<CustomerModelHive> hiveData =
             box.values.cast<CustomerModelHive>().toList();
 
@@ -40,33 +47,35 @@ class CustomerProvider extends ChangeNotifier {
               email: hived.email,
               profilePicture: hived.profilePicture);
         }).toList();
+        notifyListeners();
       }
-
-      notifyListeners();
-    } catch (e) {}
+    } catch (e) {
+      throw CustomerException(e.toString());
+      // print("error is occured: $e");
+    }
   }
 
 //method to add new customer in inside list variable _customers and save it in Hive database
-  addCustomer(CustomerModel customerModel) async {
-    var box = await Hive.openBox("customerBox");
-    await box.add(customerModel);
+  void addCustomer(CustomerModel customerModel) async {
+    var box = await Hive.openBox<CustomerModelHive>('customerBox');
+    await box.add(CustomerModelHive.fromJson(customerModel));
 
     _customers.add(customerModel);
     notifyListeners();
   }
 
 //method to update new customer in inside list variable _customers and update it in Hive database
-  updateCustomer(CustomerModel newCustomer, int index) async {
-    var box = await Hive.openBox("customerBox");
+  void updateCustomer(CustomerModel newCustomer, int index) async {
+    var box = await Hive.openBox<CustomerModelHive>('customerBox');
     await box.putAt(index, CustomerModelHive.fromJson(newCustomer));
 
     _customers[index] = newCustomer;
     notifyListeners();
   }
 
-//method to delete new customer in inside list variable _customers and delete it from Hive database
-  deleteCustomer(int index) async {
-    var box = await Hive.openBox("customerBox");
+//method to delete new customer in inside list variable _customers and delete it  Hive database
+  void deleteCustomer(int index) async {
+    var box = await Hive.openBox<CustomerModelHive>('customerBox');
     await box.deleteAt(index);
 
     _customers.removeAt(index);

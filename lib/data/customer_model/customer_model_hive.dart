@@ -1,7 +1,8 @@
 import 'package:crm_app/data/customer_model/customer_model.dart';
 import 'package:hive/hive.dart';
+part 'customer_model_hive.g.dart';
 
-
+//  part 'customer_model_hive.g.dart';
 @HiveType(typeId: 1)
 class CustomerModelHive {
   @HiveField(0)
